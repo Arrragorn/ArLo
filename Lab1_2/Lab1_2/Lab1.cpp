@@ -13,6 +13,7 @@ int main()
     IGraphBuilder* pGraph = NULL;
     IMediaControl* pControl = NULL;
     IMediaEvent* pEvent = NULL;
+    IMediaSeeking* pSeek = NULL;
 
     // Initialize the COM library.
     HRESULT hr = CoInitialize(NULL);
@@ -33,6 +34,8 @@ int main()
 
     hr = pGraph->QueryInterface(IID_IMediaControl, (void**)&pControl);
     hr = pGraph->QueryInterface(IID_IMediaEvent, (void**)&pEvent);
+    hr = pGraph->QueryInterface(IID_IMediaSeeking, (void**)&pSeek);
+
 
     // Build the graph. IMPORTANT: Change this string to a file on your system.
     hr = pGraph->RenderFile(L"Example.avi", NULL);
@@ -46,10 +49,12 @@ int main()
             std::string command;
             bool running = true;
             bool play = true;
+            bool accel = false;
             int delay = 10;
-            while (running) {
                 long evCode;
-                pEvent->WaitForCompletion(delay, &evCode);
+
+                pEvent->WaitForCompletion(INFINITY, &evCode);
+                while (running) {
                 std::cin >> command;
                 if (command == "P")
                 {
@@ -60,10 +65,32 @@ int main()
                     else {
                         pControl->Run();
                     }
-                    play = ~play;
+                    play = !play;
                 }
+                else if (command == "Q")
+                {
+                    running = false;
+                }
+                else if (command == "R")
+                {
+                    REFERENCE_TIME rtNow = 0;
+                    hr = pSeek->SetPositions(
+                        &rtNow, AM_SEEKING_AbsolutePositioning,
+                        NULL, AM_SEEKING_NoPositioning);
+                }
+                else if(command == "A"){
+                    if (accel)
+                    {
+                        pSeek->SetRate(1.0);
+                    }
+                    else
+                    {
+                        pSeek->SetRate(2.0);
 
-
+                    }
+                    accel = !accel;
+               
+                }
             }
             // Wait for completion.
            
@@ -76,6 +103,7 @@ int main()
     pControl->Release();
     pEvent->Release();
     pGraph->Release();
+    pSeek->Release();
     CoUninitialize();
 
     return 0;
