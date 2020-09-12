@@ -3,6 +3,10 @@
 #include <iostream>
 #include <dshow.h>
 
+#pragma comment(lib, "Strmiids.lib")
+
+
+
 int main()
 {
     std::cout << "Hello World!\n";
@@ -39,12 +43,19 @@ int main()
         hr = pControl->Run();
         if (SUCCEEDED(hr))
         {
+            std::string command;
             bool running = true;
             int delay = 10;
             while (running) {
                 long evCode;
                 pEvent->WaitForCompletion(delay, &evCode);
-               
+                std::cin >> command;
+                if (command == "P")
+                {
+
+
+                }
+
 
             }
             // Wait for completion.
