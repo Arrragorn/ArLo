@@ -2,6 +2,7 @@
 //Projet recible
 #include <iostream>
 #include <dshow.h>
+#include <string>
 
 #pragma comment(lib, "Strmiids.lib")
 
