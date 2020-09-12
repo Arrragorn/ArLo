@@ -45,6 +45,7 @@ int main()
         {
             std::string command;
             bool running = true;
+            bool play = true;
             int delay = 10;
             while (running) {
                 long evCode;
@@ -52,8 +53,14 @@ int main()
                 std::cin >> command;
                 if (command == "P")
                 {
-
-
+                    if (play)
+                    {
+                        pControl->Pause();
+                    }
+                    else {
+                        pControl->Run();
+                    }
+                    play = ~play;
                 }
 
 
