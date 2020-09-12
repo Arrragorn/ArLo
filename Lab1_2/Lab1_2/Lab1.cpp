@@ -39,9 +39,16 @@ int main()
         hr = pControl->Run();
         if (SUCCEEDED(hr))
         {
+            bool running = true;
+            int delay = 10;
+            while (running) {
+                long evCode;
+                pEvent->WaitForCompletion(delay, &evCode);
+               
+
+            }
             // Wait for completion.
-            long evCode;
-            pEvent->WaitForCompletion(INFINITE, &evCode);
+           
 
             // Note: Do not use INFINITE in a real application, because it
             // can block indefinitely.
