@@ -1,5 +1,5 @@
 
-
+//Projet recible
 #include <iostream>
 #include <dshow.h>
 
