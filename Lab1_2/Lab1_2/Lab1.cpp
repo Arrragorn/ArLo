@@ -7,8 +7,9 @@
 #pragma comment(lib, "Strmiids.lib")
 
 
+void afficherMenu();
 
-int main()
+void main()
 {
     std::cout << "Hello World!\n";
     IGraphBuilder* pGraph = NULL;
@@ -21,7 +22,6 @@ int main()
     if (FAILED(hr))
     {
         printf("ERROR - Could not initialize COM library");
-        return 1;
     }
 
     // Create the filter graph manager and query for interfaces.
@@ -30,7 +30,6 @@ int main()
     if (FAILED(hr))
     {
         printf("ERROR - Could not create the Filter Graph Manager.");
-        return 1;
     }
 
     hr = pGraph->QueryInterface(IID_IMediaControl, (void**)&pControl);
@@ -56,7 +55,9 @@ int main()
 
                 pEvent->WaitForCompletion(INFINITY, &evCode);
                 while (running) {
+                    afficherMenu();
                 std::cin >> command;
+                command = toupper(command[0]);
                 if (command == "P")
                 {
                     if (play)
@@ -107,5 +108,14 @@ int main()
     pSeek->Release();
     CoUninitialize();
 
-    return 0;
+}
+
+void afficherMenu(){
+
+    std::cout << "Menu des commandes" << std::endl;
+    std::cout << "P - Play ou Pause" << std::endl;
+    std::cout << "A - Avance acceleree" << std::endl;
+    std::cout << "R - Retour au debut" << std::endl;
+    std::cout << "Q - Quitter" << std::endl;
+
 }
