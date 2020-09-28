@@ -35,8 +35,8 @@ PyInit_spam(void)
 }
 
 
-int
-main(int argc, char* argv[])
+
+int main(int argc, char* argv[])
 {
     wchar_t* program = Py_DecodeLocale(argv[0], NULL);
     if (program == NULL) {
