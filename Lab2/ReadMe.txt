@@ -27,5 +27,3 @@ Pour tester le module, le fichier .\Environement_debugage.ipynb peut être utili
 2- Lancer le fichier Environement_debugage.ipynb avec Jupyter Lab
 3- modifier les chemins
 4- exécuter les cellules en ordre 
-
-la vidéo jouée est celle du nom de exemple.avi dans le dossier Lab1_2/Lab1_2
