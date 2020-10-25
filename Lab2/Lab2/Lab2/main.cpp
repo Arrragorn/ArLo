@@ -37,6 +37,7 @@ spam_run(PyObject* self, PyObject* args)
     // Create the filter graph manager and query for interfaces.
     hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER,
         IID_IGraphBuilder, (void**)&pGraph);
+
     if (FAILED(hr))
     {
         printf("ERROR - Could not create the Filter Graph Manager.");
@@ -66,50 +67,64 @@ spam_run(PyObject* self, PyObject* args)
 }
 
 static PyObject*
-spam_play_pause(PyObject* self, PyObject* args)
+spam_play(PyObject* self, PyObject* args)
 {
-    if (play)
+    if (pGraph != NULL || pControl != NULL || pEvent != NULL || pSeek != NULL)
+    {
+        pControl->Run();
+    }
+    return PyLong_FromLong(0);
+}
+
+
+static PyObject*
+spam_pause(PyObject* self, PyObject* args)
+{
+    if (pGraph != NULL || pControl != NULL || pEvent != NULL || pSeek != NULL)
     {
         pControl->Pause();
     }
-    else {
-        pControl->Run();
-    }
-    play = !play;
     return PyLong_FromLong(0);
 }
 
+
 static PyObject*
-spam_accelerate(PyObject* self, PyObject* args)
+spam_accelerate1(PyObject* self, PyObject* args)
 {
-    if (accel)
+    if (pGraph != NULL || pControl != NULL || pEvent != NULL || pSeek != NULL)
     {
         pSeek->SetRate(1.0);
     }
-    else
-    {
-        pSeek->SetRate(2.0);
-
-    }
-    accel = !accel;
     return PyLong_FromLong(0);
 }
 
+
+static PyObject*
+spam_accelerate2(PyObject* self, PyObject* args)
+{
+    if (pGraph != NULL || pControl != NULL || pEvent != NULL || pSeek != NULL)
+    {
+        pSeek->SetRate(2.0);
+        }
+    return PyLong_FromLong(0);
+}
 static PyObject*
 spam_quit(PyObject* self, PyObject* args)
 {
-    
-    pControl->Release();
-    pEvent->Release();
-    pGraph->Release();
-    pSeek->Release();
-    CoUninitialize();
+    if (pGraph != NULL || pControl != NULL || pEvent != NULL || pSeek != NULL)
+    {
+        pControl->Release();
+        pEvent->Release();
+        pGraph->Release();
+        pSeek->Release();
+        CoUninitialize();
 
-    play = false;
-    pControl = NULL;
-    pEvent = NULL;
-    pGraph = NULL;
-    pSeek = NULL;
+        play = false;
+        pControl = NULL;
+        pEvent = NULL;
+        pGraph = NULL;
+        pSeek = NULL;
+    }
     return PyLong_FromLong(0);
 }
 
@@ -127,14 +142,18 @@ spam_replay(PyObject* self, PyObject* args)
 static PyMethodDef SpamMethods[] = {
     {"run",  spam_run, METH_VARARGS,
      "run a video"},
-     {"play_pause",  spam_play_pause, METH_VARARGS,
-     "play or pause the running video"},
+     {"pause",  spam_pause, METH_VARARGS,
+     "pause the running video"},
+     {"play",  spam_play, METH_VARARGS,
+     "play the running video"},
      {"replay",  spam_replay, METH_VARARGS,
      "replay the running video"},
      {"quit",  spam_quit, METH_VARARGS,
      "quit the running video"},
-     {"accelerate",  spam_accelerate, METH_VARARGS,
-     "accelerate or decelerate the running video"},
+     {"accelerate1x",  spam_accelerate1, METH_VARARGS,
+     "accelerate 1x the running video"},
+     {"accelerate2x",  spam_accelerate2, METH_VARARGS,
+     "accelerate 2x the running video"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
