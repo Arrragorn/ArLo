@@ -15,7 +15,24 @@ IMediaSeeking* pSeek = NULL;
 
 int iterations;
 int nbThreads = 4;
-void task();
+//void task();
+
+
+class Task {
+public:
+    static void task(int start, int stop) {
+        std::thread::id this_id = std::this_thread::get_id();
+        //for (int i = 0; i < iterations / nbThreads; i++)
+        //{
+         //   std::cout << std::endl << "Thread ID:" << this_id << " // Iteration:" << i;
+        //}
+        for (int i = start; i < stop; i++)
+        {
+            std::cout << std::endl << "Thread ID:" << this_id << " // Iteration:" << i;
+        }
+    }
+};
+
 
 static PyObject*
 boucleSimple(PyObject* self, PyObject* args)
@@ -49,10 +66,14 @@ boucleThread(PyObject* self, PyObject* arg1)
 
 
     std::vector<std::thread> vecThreads;
+    std::vector<int> vecStart;
+    std::vector<int> vecStop;
 
     for (int i = 0; i < nbThreads; i++)
     {
-        vecThreads.push_back(std::thread(task));
+        vecStart.push_back(i*(iterations/nbThreads));
+        vecStop.push_back((i+1)* (iterations / nbThreads));
+        vecThreads.push_back(std::thread(&Task::task, vecStart[i], vecStop[i]));
     }
    
     for (int i = 0; i < nbThreads; i++)
@@ -63,17 +84,6 @@ boucleThread(PyObject* self, PyObject* arg1)
     return PyLong_FromLong(-0);
 }
 
-void task() {
-    std::thread::id this_id = std::this_thread::get_id();
-    for (int i = 0; i < iterations / nbThreads; i++)
-    {
-        //printf("%s\n", "Thread ID:");
-       // printf("%s", std::to_string(this_id));
-       // printf("%s", " // Iteration:");
-        //printf("%d", i);
-        std::cout << std::endl << "Thread ID:" << this_id << " // Iteration:" << i;
-    }
-}
 
 
 
