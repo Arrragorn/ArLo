@@ -4,6 +4,7 @@
 #include <dshow.h>
 #include <thread>
 #include <vector>
+#include <iostream>
 
 #pragma comment(lib, "Strmiids.lib")
 
@@ -13,7 +14,7 @@ IMediaEvent* pEvent = NULL;
 IMediaSeeking* pSeek = NULL;
 
 int iterations;
-int nbThreads;
+int nbThreads = 4;
 void task();
 
 static PyObject*
@@ -30,21 +31,22 @@ boucleSimple(PyObject* self, PyObject* args)
 
     for (int i = 0; i < iterations; i++)
     {
-        printf("%d\n", iterations);
+        printf("%d\n", i);
     }
 
     return PyLong_FromLong(-0);
 }
 
 static PyObject*
-boucleThread(PyObject* self, PyObject* args)
+boucleThread(PyObject* self, PyObject* arg1)
 {
 
-    if (!PyArg_ParseTuple(args, "i", &iterations , &nbThreads))
+    if (!PyArg_ParseTuple(arg1, "i", &iterations))
     {
         printf("Argument invalide");
         return PyLong_FromLong(-1);
     }
+
 
     std::vector<std::thread> vecThreads;
 
@@ -62,9 +64,14 @@ boucleThread(PyObject* self, PyObject* args)
 }
 
 void task() {
+    std::thread::id this_id = std::this_thread::get_id();
     for (int i = 0; i < iterations / nbThreads; i++)
     {
-
+        //printf("%s\n", "Thread ID:");
+       // printf("%s", std::to_string(this_id));
+       // printf("%s", " // Iteration:");
+        //printf("%d", i);
+        std::cout << std::endl << "Thread ID:" << this_id << " // Iteration:" << i;
     }
 }
 
