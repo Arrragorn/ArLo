@@ -22,10 +22,7 @@ class Task {
 public:
     static void task(int start, int stop) {
         std::thread::id this_id = std::this_thread::get_id();
-        //for (int i = 0; i < iterations / nbThreads; i++)
-        //{
-         //   std::cout << std::endl << "Thread ID:" << this_id << " // Iteration:" << i;
-        //}
+      
         for (int i = start; i < stop; i++)
         {
             std::cout << std::endl << "Thread ID:" << this_id << " // Iteration:" << i;
