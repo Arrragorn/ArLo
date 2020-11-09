@@ -14,6 +14,7 @@ IMediaSeeking* pSeek = NULL;
 
 int iterations;
 int nbThreads;
+void task();
 
 static PyObject*
 boucleSimple(PyObject* self, PyObject* args)
