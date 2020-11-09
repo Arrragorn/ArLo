@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 #include <dshow.h>
+#include <thread>
+#include <vector>
 
 #pragma comment(lib, "Strmiids.lib")
 
@@ -10,15 +12,13 @@ IMediaControl* pControl = NULL;
 IMediaEvent* pEvent = NULL;
 IMediaSeeking* pSeek = NULL;
 
-bool play = false;
-bool accel = false;
-
-
+int iterations;
+int nbThreads;
 
 static PyObject*
 boucleSimple(PyObject* self, PyObject* args)
 {
-    const int* iterations;
+  
 
     if (!PyArg_ParseTuple(args, "i", &iterations))
     {
@@ -26,41 +26,55 @@ boucleSimple(PyObject* self, PyObject* args)
         return PyLong_FromLong(-1);
     }
    
-    int nbIterations = *iterations;
 
-    for (int i = 0; i < nbIterations; i++)
+    for (int i = 0; i < iterations; i++)
     {
-        printf("%d\n", nbIterations);
+        printf("%d\n", iterations);
     }
 
     return PyLong_FromLong(-0);
 }
 
 static PyObject*
-spam_play(PyObject* self, PyObject* args)
+boucleThread(PyObject* self, PyObject* args)
 {
-  
+
+    if (!PyArg_ParseTuple(args, "i", &iterations , &nbThreads))
+    {
+        printf("Argument invalide");
+        return PyLong_FromLong(-1);
+    }
+
+    std::vector<std::thread> vecThreads;
+
+    for (int i = 0; i < nbThreads; i++)
+    {
+        vecThreads.push_back(std::thread(task));
+    }
+   
+    for (int i = 0; i < nbThreads; i++)
+    {
+        vecThreads[i].join();
+    }
+   
     return PyLong_FromLong(-0);
 }
 
+void task() {
+    for (int i = 0; i < iterations / nbThreads; i++)
+    {
 
-static PyObject*
-spam_pause(PyObject* self, PyObject* args)
-{
- 
-    return PyLong_FromLong(-0);
+    }
 }
 
 
 
 
 static PyMethodDef SpamMethods[] = {
-    {"run",  boucleSimple, METH_VARARGS,
-     "run a video"},
-     {"pause",  spam_pause, METH_VARARGS,
-     "pause the running video"},
-     {"play",  spam_play, METH_VARARGS,
-     "play the running video"},
+    {"boucleSimple",  boucleSimple, METH_VARARGS,
+     "run boucle simple"},
+     {"boucleThread",  boucleThread, METH_VARARGS,
+     "run boucle thread"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
