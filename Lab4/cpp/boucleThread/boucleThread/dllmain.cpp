@@ -20,13 +20,11 @@ int nbThreads = 4;
 
 class Task {
 public:
-    static void task(int start, int stop) {
+    static void task(int stop) {
         std::thread::id this_id = std::this_thread::get_id();
       
-        for (int i = start; i < stop; i++)
-        {
-            std::cout << std::endl << "Thread ID:" << this_id << " // Iteration:" << i;
-        }
+        for (volatile int i = 0; i < stop; i++);
+        
     }
 };
 
@@ -43,10 +41,8 @@ boucleSimple(PyObject* self, PyObject* args)
     }
    
 
-    for (int i = 0; i < iterations; i++)
-    {
-        printf("%d\n", i);
-    }
+    for (volatile int i = 0; i < iterations; i++);
+   
 
     return PyLong_FromLong(-0);
 }
@@ -68,9 +64,9 @@ boucleThread(PyObject* self, PyObject* arg1)
 
     for (int i = 0; i < nbThreads; i++)
     {
-        vecStart.push_back(i*(iterations/nbThreads));
-        vecStop.push_back((i+1)* (iterations / nbThreads));
-        vecThreads.push_back(std::thread(&Task::task, vecStart[i], vecStop[i]));
+
+        vecStop.push_back(iterations / nbThreads);
+        vecThreads.push_back(std::thread(&Task::task, vecStop[i]));
     }
    
     for (int i = 0; i < nbThreads; i++)
